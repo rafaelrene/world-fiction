@@ -6,8 +6,9 @@
   "sideEffects": false,
   "scripts": {
     "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
-    "build": "remix build",
+    "build": "run-s build:*",
     "build:css": "npm run generate:css -- --minify",
+    "build:remix": "remix build",
     "dev": "run-p dev:*",
     "dev:css": "npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development NODE_OPTIONS='--inspect' netlify dev",
