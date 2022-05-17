@@ -4,8 +4,9 @@ import type { Story } from "~/types";
 import { Link, useLoaderData } from "@remix-run/react";
 import classNames from "classnames";
 
-import { requireUser } from "~/helpers/authRoute";
+import { requireUser } from "~/helpers/authRoute.server";
 import { db } from "~/services/db.server";
+import { Img } from "react-image";
 
 export const meta: MetaFunction = () => ({
   title: "My Stories [World Fiction]",
@@ -24,6 +25,17 @@ export const loader: LoaderFunction = async ({ request }) => {
   return result.records.map((record) => record.get("s").properties);
 };
 
+const mediaStyles = {
+  display: "grid",
+  gridTemplateRows: "24px 1fr 24px",
+  gridTemplateColumns: "64px 1fr",
+  gridTemplateAreas: `
+    'image title'
+    'image description'
+    'footer footer'
+  `,
+};
+
 export default function StoriesIndex() {
   const stories = useLoaderData<Story[]>();
 
@@ -35,25 +47,28 @@ export default function StoriesIndex() {
         </Link>
       </section>
       <ul className="bg-slate-700 container m-auto rounded p-2">
-        <li className="flex justify-around gap-2 font-bold">
-          <div className="basis-2/12">Title</div>
-          <div className="basis-9/12">Description</div>
-          <div className="basis-1/12 text-right">Is Published?</div>
-        </li>
-        {stories.map(({ title, description, published, id }) => (
-          <li className="flex justify-around gap-2" key={id}>
-            <div className="basis-2/12 truncate" title={title}>
+        {stories.map(({ title, cover, description, isPublished, id }) => (
+          <li style={mediaStyles} className="p-2 gap-2" key={id}>
+            <div style={{ gridArea: "image" }}>
+              <Img src={cover} />
+            </div>
+            <div
+              style={{ gridArea: "title" }}
+              className="truncate"
+              title={title}
+            >
               <Link to={`edit/${id}`} className="hover:text-rose-600">
                 {title}
               </Link>
             </div>
-            <div className="basis-9/12">{description}</div>
+            <div style={{ gridArea: "description" }}>{description}</div>
             <div
-              className={classNames("basis-1/12 text-rose-600 text-right", {
-                "text-green-600": published === true,
+              style={{ gridArea: "footer" }}
+              className={classNames("text-rose-600", {
+                "text-green-600": isPublished === true,
               })}
             >
-              {published === true ? "Yes" : "No"}
+              {isPublished === true ? "Yes" : "No"}
             </div>
           </li>
         ))}

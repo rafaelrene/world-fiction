@@ -7,7 +7,7 @@ import { Form } from "@remix-run/react";
 import { v4 } from "uuid";
 import { DateTime } from "luxon";
 
-import { requireUser } from "~/helpers/authRoute";
+import { requireUser } from "~/helpers/authRoute.server";
 import { db } from "~/services/db.server";
 
 export const meta: MetaFunction = () => ({
@@ -34,10 +34,10 @@ export const action: ActionFunction = async ({ request }) => {
     id: v4(),
     title: formValues.title,
     description: formValues.description,
-    published: false,
+    isPublished: false,
     createdAt: DateTime.utc().toISO(),
     updatedAt: DateTime.utc().toISO(),
-    cover: null,
+    cover: "https://picsum.photos/200/300",
   };
 
   const query = `

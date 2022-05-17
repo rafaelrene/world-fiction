@@ -2,7 +2,7 @@ import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 
 import { NavLink, Outlet } from "@remix-run/react";
 
-import { requireUser } from "~/helpers/authRoute";
+import { requireUser } from "~/helpers/authRoute.server";
 
 export const meta: MetaFunction = () => ({
   title: "Dashboard [World Fiction]",

@@ -10,8 +10,8 @@ export type Story = {
     id: string;
     title: string;
     description: string;
-    cover: string | null;
+    cover: string;
     createdAt: string;
     updatedAt: string;
-    published: boolean;
+    isPublished: boolean;
 };
