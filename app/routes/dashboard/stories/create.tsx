@@ -1,6 +1,8 @@
+import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import type { Story } from "~/types";
 
-import { ActionFunction, MetaFunction, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
+
 import { Form } from "@remix-run/react";
 import { v4 } from "uuid";
 import { DateTime } from "luxon";
@@ -24,6 +26,10 @@ export const action: ActionFunction = async ({ request }) => {
     throw new Error("Story title is required");
   }
 
+  if (formValues.description === undefined) {
+    throw new Error("Story description is required");
+  }
+
   const story: Story = {
     id: v4(),
     title: formValues.title,
@@ -35,8 +41,9 @@ export const action: ActionFunction = async ({ request }) => {
   };
 
   const query = `
-    CREATE (s:Story {id: $story.id, title: $story.title, description: $story.description, published: $story.published, createdAt: $story.createdAt, updatedAt: $story.updatedAt, cover: $story.cover})-[:CREATED_BY]->(u:User {id: $idUser})
-    RETURN s, u
+    MATCH (u:User {id: $idUser})
+    CREATE (s:Story $story)-[:CREATED_BY]->(u)
+    RETURN s
   `;
 
   await db(query, { story, idUser: user.id });
