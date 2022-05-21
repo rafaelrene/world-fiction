@@ -3,86 +3,61 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import type { Story } from "~/types";
+import type { Chapter } from "~/types";
 
 import { Form, useLoaderData } from "@remix-run/react";
-import classNames from "classnames";
 
 import { db } from "~/services/db.server";
 import { requireUser } from "~/helpers/authRoute.server";
-import {
-  deleteStory,
-  editStory,
-  setStoryIsPublished,
-} from "~/handlers/story.server";
+import { deleteChapter, editChapter } from "~/handlers/chapter.server";
 
 export const meta: MetaFunction = ({ data }) => ({
   title: `${data.title} - Edit [World Fiction]`,
 });
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  if (params.idStory === undefined) {
-    throw new Error("idStory must be provided!");
+  if (params.idChapter === undefined) {
+    throw new Error("idChapter must be provided!");
   }
 
   const user = await requireUser(request);
 
   const query = `
-    MATCH (s:Story {id: $idStory})-[:CREATED_BY]->(:User {id: $idUser})
-    RETURN s
+    MATCH (c:Chapter {id: $idChapter})-[:CREATED_BY]->(:User {id: $idUser})
+    RETURN c
   `;
 
-  const result = await db(query, { idStory: params.idStory, idUser: user.id });
+  const result = await db(query, {
+    idChapter: params.idChapter,
+    idUser: user.id,
+  });
 
-  return result.records[0].get("s").properties;
+  return result.records[0].get("c").properties;
 };
 
 export const action: ActionFunction = async ({ request }) => {
   if (request.method === "DELETE") {
-    return deleteStory(request);
+    return deleteChapter(request);
   }
 
   if (request.method === "POST") {
-    return editStory(request);
-  }
-
-  if (request.method === "PATCH") {
-    return setStoryIsPublished(request);
+    return editChapter(request);
   }
 
   throw new Error("Method was invalid!");
 };
 
 export default function EditStory() {
-  const story = useLoaderData<Story>();
+  const chapter = useLoaderData<Chapter>();
 
   return (
     <div className="w-full flex flex-col gap-2">
       <div className="flex justify-center gap-2">
-        <Form method="patch">
-          <input
-            className="hidden"
-            type="checkbox"
-            name="isPublished"
-            checked={story.isPublished === false}
-          />
-          <button
-            type="submit"
-            name="_publish"
-            value={story.id}
-            className={classNames("rounded p-2 w-fit block", {
-              "bg-rose-600": story.isPublished === true,
-              "bg-green-600": story.isPublished === false,
-            })}
-          >
-            {story.isPublished === true ? "Unpublish" : "Publish"}
-          </button>
-        </Form>
         <Form method="delete">
           <button
             type="submit"
             name="_delete"
-            value={story.id}
+            value={chapter.id}
             className="rounded bg-rose-600 p-2 w-fit block"
           >
             Delete
@@ -93,7 +68,7 @@ export default function EditStory() {
         method="post"
         className="flex flex-col gap-2 m-auto items-center container text-slate-900"
       >
-        <input type="hidden" name="id" value={story.id} />
+        <input type="hidden" name="id" value={chapter.id} />
         <input
           required
           minLength={3}
@@ -101,14 +76,21 @@ export default function EditStory() {
           type="text"
           name="title"
           placeholder="Title"
-          defaultValue={story.title}
+          defaultValue={chapter.title}
         />
         <textarea
           required
           className="container"
           name="description"
           placeholder="Description"
-          defaultValue={story.description}
+          defaultValue={chapter.description}
+        />
+        <textarea
+          required
+          className="container"
+          name="content"
+          placeholder="Description"
+          defaultValue={chapter.content}
         />
         <button
           className="container rounded p-2 bg-rose-600 text-slate-50"

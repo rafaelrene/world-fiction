@@ -40,7 +40,7 @@ export default function StoriesIndex() {
   const stories = useLoaderData<Story[]>();
 
   return (
-    <div className="w-full flex flex-col gap-2 text-slate-50">
+    <div className="w-full flex flex-col gap-2">
       <section className="flex justify-center">
         <Link to="create" className="rounded bg-rose-600 p-2 w-fit block">
           Create Story

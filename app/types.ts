@@ -15,3 +15,12 @@ export type Story = {
     updatedAt: string;
     isPublished: boolean;
 };
+
+export type Chapter = {
+    id: string;
+    title: string;
+    description: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+};

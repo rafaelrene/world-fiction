@@ -16,9 +16,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function DashboardIndex() {
   return (
-    <main className="text-slate-50 flex flex-col gap-2 items-center">
-      <section className="bg-slate-700 w-full px-2">
+    <main className="flex flex-col gap-2 items-center">
+      <section className="bg-slate-700 w-full px-2 flex gap-2">
         <NavLink to="stories">Stories</NavLink>
+        <NavLink to="chapters">Chapters</NavLink>
       </section>
       <Outlet />
     </main>
