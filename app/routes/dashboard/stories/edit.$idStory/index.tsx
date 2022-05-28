@@ -5,7 +5,7 @@ import type {
 } from "@remix-run/node";
 import type { Story } from "~/types";
 
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import classNames from "classnames";
 
 import { db } from "~/services/db.server";
@@ -78,6 +78,9 @@ export default function EditStory() {
             {story.isPublished === true ? "Unpublish" : "Publish"}
           </button>
         </Form>
+        <Link to="chapters" className="rounded p-2 block bg-neutral-600">
+          Chapters
+        </Link>
         <Form method="delete">
           <button
             type="submit"
